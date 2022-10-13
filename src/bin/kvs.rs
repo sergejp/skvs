@@ -27,6 +27,7 @@ fn cli() -> Command {
                           .action(ArgAction::Set)
                           .required(true)
                   )
+                  .arg_required_else_help(true)
         )
 	.subcommand(
 	    Command::new("get")
