@@ -7,10 +7,10 @@ fn main() {
 }
 
 fn cli() -> Command {
-    Command::new("kvs")
+    Command::new(env!("CARGO_PKG_NAME"))
         .version(env!("CARGO_PKG_VERSION"))
-        .author("Sergej P.")
-        .about("Networked Key Value Store")
+        .author(env!("CARGO_PKG_AUTHORS"))
+        .about(env!("CARGO_PKG_DESCRIPTION"))
 	.subcommand_required(true)
         .subcommand(
               Command::new("set")
