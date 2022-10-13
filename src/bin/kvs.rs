@@ -1,4 +1,4 @@
-use clap::{Arg, arg, ArgAction, Command};
+use clap::{Arg, ArgAction, Command};
 
 fn main() {
     let matches = Command::new("kvs")
@@ -21,15 +21,22 @@ fn main() {
                 .about("Remove value by key from the database")
                 .arg(
                     Arg::new("key")
-                        .help("Original key (string) that was used to insert value into the database. \nIt's safe to call if there is no such entry in the database.")                        .action(ArgAction::Set)
+                        .help("Original key (string) that was used to insert value into the database. \nIt's safe to call if there is no such entry in the database.")                        
+			.action(ArgAction::Set)
                 )
                 .arg_required_else_help(true)
         )
         .get_matches();
 
     match matches.subcommand() {
-        Some(("get", sub_matches)) => println!("kvs get [KEY] was used: {:?}", sub_matches.get_one::<String>("key")),
-	Some(("rm", sub_matches)) => println!("kvs rm [KEY] was used: {:?}", sub_matches.get_one::<String>("key")),
+        Some(("get", sub_matches)) => println!(
+            "kvs get [KEY] was used: {:?}",
+            sub_matches.get_one::<String>("key")
+        ),
+        Some(("rm", sub_matches)) => println!(
+            "kvs rm [KEY] was used: {:?}",
+            sub_matches.get_one::<String>("key")
+        ),
         _ => unreachable!("Exhausted list of subcommands and subcommand_required prevents `None`"),
     }
 }
