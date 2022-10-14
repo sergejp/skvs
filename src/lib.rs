@@ -1,4 +1,8 @@
-pub struct KvStore {}
+use std::collections::HashMap;
+
+pub struct KvStore {
+    map: HashMap<String, String>,
+}
 
 impl Default for KvStore {
     fn default() -> Self {
@@ -8,18 +12,20 @@ impl Default for KvStore {
 
 impl KvStore {
     pub fn new() -> Self {
-        KvStore {}
+        KvStore {
+            map: HashMap::new(),
+        }
     }
 
     pub fn set(&mut self, key: String, val: String) {
-        unimplemented!();
+        self.map.insert(key, val);
     }
 
     pub fn get(&self, key: String) -> Option<String> {
-        None
+        self.map.get(&key).map(|val| val.to_owned())
     }
 
     pub fn remove(&mut self, key: String) {
-        unimplemented!();
+        self.map.remove(&key);
     }
 }
