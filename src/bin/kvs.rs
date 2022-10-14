@@ -3,17 +3,8 @@ use kvs::KvStore;
 use std::process;
 
 fn main() {
-    //    let matches = cli().get_matches();
-    //    execute(&matches);
-
-    let mut store = KvStore::new();
-    store.set(String::from("Milan"), String::from("Italy"));
-    store.set(String::from("London"), String::from("UK"));
-    println!("Milan is in {:?}", store.get(String::from("Milan")));
-    println!("London is in {:?}", store.get(String::from("London")));
-    assert!(store.get(String::from("Rome")) == None);
-    store.remove(String::from("Milan"));
-    assert!(store.get(String::from("Milan")) == None);
+    let matches = cli().get_matches();
+    execute(&matches);
 }
 
 fn cli() -> Command {
