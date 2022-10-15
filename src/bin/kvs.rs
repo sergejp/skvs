@@ -1,5 +1,4 @@
 use clap::{parser::ArgMatches, Arg, ArgAction, Command};
-use kvs::KvStore;
 use std::process;
 
 fn main() {
