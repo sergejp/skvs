@@ -1,3 +1,4 @@
+#![warn(missing_docs)]
 //! **Networked key-value database with typical methods to insert,
 //! update and delete data.**
 //!
@@ -48,16 +49,19 @@ impl KvStore {
     }
 
     /// Inserts new value into the database (or updates if key already exists).
+    /// See top-level module description for examples
     pub fn set(&mut self, key: String, val: String) {
         self.map.insert(key, val);
     }
 
     /// Retrieves value by key. No panic if key doesn't exist.
+    /// See top-level module description for examples
     pub fn get(&self, key: String) -> Option<String> {
         self.map.get(&key).map(|val| val.to_owned())
     }
 
     /// Removes value from the database. No panic if key doesn't exist.
+    /// See top-level module description for examples
     pub fn remove(&mut self, key: String) {
         self.map.remove(&key);
     }
