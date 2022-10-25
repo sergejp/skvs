@@ -9,6 +9,7 @@ license = "MIT OR Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+bson = "2.4.0"
 clap = { version = "4.0.14", features = ["derive"] }
 ron = "0.8.0"
 serde = { version = "1.0.145", features = ["derive"] }

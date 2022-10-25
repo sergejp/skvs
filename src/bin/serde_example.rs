@@ -1,10 +1,12 @@
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
+use std::mem;
+use std::os::unix::prelude::FileExt;
 use std::{error::Error, fs::File};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Move {
-    steps: u8,
+    steps: u32,
     dir: Direction,
 }
 
@@ -19,6 +21,7 @@ enum Direction {
 fn main() -> Result<(), Box<dyn Error>> {
     json_example()?;
     ron_example()?;
+    bson_example()?;
     Ok(())
 }
 
@@ -61,6 +64,57 @@ fn ron_example() -> Result<(), Box<dyn Error>> {
 
     let de_str: Move = ron::from_str(&ser_a)?;
     println!("Deserialized: {:?}", de_str);
+
+    Ok(())
+}
+
+fn bson_example() -> Result<(), Box<dyn Error>> {
+    let mut f = File::create("db.bson")?;
+
+    for i in 1..=1000 {
+        let a = Move {
+            steps: i,
+            dir: Direction::Left,
+        };
+        let mut a_bson = bson::to_vec(&a)?;
+        let data_len = a_bson.len() as u32;
+        let mut data_frame =
+            Vec::<u8>::with_capacity(mem::size_of_val(&data_len) + data_len as usize);
+        data_frame = data_len.to_be_bytes().to_vec();
+        data_frame.append(&mut a_bson);
+        f.write_all(&data_frame)?;
+    }
+
+    f.sync_all()?;
+
+    let mut f = File::open("db.bson")?;
+    let mut cursor = 0;
+    let mut moves = Vec::<Move>::with_capacity(1000);
+    loop {
+        // read the data length from first 4 bytes
+        let mut data_len_buf = [0u8; mem::size_of::<u32>()];
+        let mut num_bytes_read = f.read_at(&mut data_len_buf, cursor)?;
+        if num_bytes_read == 0 {
+            break;
+        }
+        cursor += mem::size_of::<u32>() as u64;
+
+        // read data
+        let data_len = u32::from_be_bytes(data_len_buf);
+        let mut data_buf = vec![0; data_len as usize];
+        let num_bytes_read = f.read_at(&mut data_buf, cursor)?;
+        if num_bytes_read == 0 {
+            break;
+        }
+        cursor += data_len as u64;
+
+        // reconstruct data
+        let a: Move = bson::from_slice(&data_buf.to_vec())?;
+        moves.push(a);
+    }
+
+    println!("moves.len() = {}", &moves.len());
+    println!("moves[..10] = {:?}", &moves[..10]);
 
     Ok(())
 }
