@@ -28,6 +28,9 @@
 //!
 
 use std::collections::HashMap;
+use std::io;
+use std::path::PathBuf;
+use std::result;
 
 /// Represents the database instance and provides interface for data manipulation.
 pub struct KvStore {
@@ -40,6 +43,16 @@ impl Default for KvStore {
     }
 }
 
+/// Unified error type that is used across the library.
+/// Exposes underlying error type as an associated value.
+#[derive(Debug)]
+pub enum KvStoreError {
+    Io(io::Error),
+}
+
+/// Shorthand type alias for generic result with error.
+type Result<T> = result::Result<T, KvStoreError>;
+
 impl KvStore {
     /// Creates KvStore instance with default configuration and returns it.
     pub fn new() -> Self {
@@ -50,19 +63,26 @@ impl KvStore {
 
     /// Inserts new value into the database (or updates if key already exists).
     /// See top-level module description for examples
-    pub fn set(&mut self, key: String, val: String) {
+    pub fn set(&mut self, key: String, val: String) -> Result<()> {
         self.map.insert(key, val);
+        Ok(())
     }
 
     /// Retrieves value by key. No panic if key doesn't exist.
     /// See top-level module description for examples
-    pub fn get(&self, key: String) -> Option<String> {
-        self.map.get(&key).map(|val| val.to_owned())
+    pub fn get(&self, key: String) -> Result<Option<String>> {
+        self.map.get(&key).map(|val| val.to_owned());
+        Ok(None)
     }
 
     /// Removes value from the database. No panic if key doesn't exist.
     /// See top-level module description for examples
-    pub fn remove(&mut self, key: String) {
+    pub fn remove(&mut self, key: String) -> Result<()> {
         self.map.remove(&key);
+        Ok(())
+    }
+
+    pub fn open(path: impl Into<PathBuf>) -> Result<KvStore> {
+        Ok(KvStore::new())
     }
 }

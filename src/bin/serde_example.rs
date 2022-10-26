@@ -88,13 +88,13 @@ fn bson_file_example() -> Result<(), Box<dyn Error>> {
 
     f.sync_all()?;
 
-    let mut f = File::open("db.bson")?;
+    let f = File::open("db.bson")?;
     let mut cursor = 0;
     let mut moves = Vec::<Move>::with_capacity(1000);
     loop {
         // read the data length from first 4 bytes
         let mut data_len_buf = [0u8; mem::size_of::<u32>()];
-        let mut num_bytes_read = f.read_at(&mut data_len_buf, cursor)?;
+        let num_bytes_read = f.read_at(&mut data_len_buf, cursor)?;
         if num_bytes_read == 0 {
             break;
         }
@@ -150,7 +150,7 @@ fn bson_vec_example() -> Result<(), Box<dyn Error>> {
         cursor += mem::size_of::<u32>();
         let data = &moves_buf[cursor..(cursor + data_len as usize)];
         cursor += data_len as usize;
-        let a: Move = bson::from_slice(&data.to_vec())?;
+        let a: Move = bson::from_slice(data)?;
         moves.push(a);
     }
 
