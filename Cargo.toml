@@ -19,6 +19,8 @@ serde_json = "1.0.86"
 assert_cmd = "2.0.4"
 criterion = "0.4.0"
 predicates = "2.1.1"
+tempfile = "3.3.0"
+walkdir = "2.3.2"
 
 [[bin]]
 name = "kvs"
